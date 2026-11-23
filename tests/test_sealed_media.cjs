@@ -1,0 +1,11 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
+const root=__dirname,{seal,unseal}=require('../bridge/sealed_media.cjs'),{id}=require('../bridge/inbox.cjs');
+const msgid='offline-seal-test-'+Date.now();
+const prepared={record:{msgid,chatid:'fixture'},media:[{type:'file',source:{url:'https://example.invalid/?temporary=private-fixture',aeskey:'private-test-key'}}]};
+seal(root,prepared);const p=path.join(root,'media-sealed',id(msgid)+'.dpapi');
+const ciphertext=fs.readFileSync(p);
+assert.equal(ciphertext.includes(Buffer.from('private-test-key')),false);
+assert.equal(ciphertext.includes(Buffer.from('example.invalid')),false);
+assert.deepEqual(unseal(root,msgid),prepared);
+fs.unlinkSync(p);console.log('DPAPI fixture passed: roundtrip, no plaintext URL/key on disk; no network.');

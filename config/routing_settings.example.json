@@ -1,0 +1,12 @@
+{
+  "personal_model": {
+    "model": "gpt-6.2-astra",
+    "reasoning_effort": "max"
+  },
+  "group_readonly_model": {
+    "model": "gpt-6.2-sol",
+    "reasoning_effort": "xhigh"
+  },
+  "model_dispatch_implemented": false,
+  "context_visibility": "bot_delivered_only"
+}

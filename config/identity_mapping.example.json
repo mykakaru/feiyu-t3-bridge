@@ -1,0 +1,8 @@
+{
+  "owner_ws_userids": [
+    "REPLACE_WITH_YOUR_WECOM_STABLE_USERID"
+  ],
+  "verified_at": "2026-01-01T00:00:00+00:00",
+  "verification": "Verify your exact stable WeCom WebSocket userid from an inbound private message before enabling",
+  "scope": "Exact stable WeCom WS sender ID only; display-name matching is intentionally disabled"
+}

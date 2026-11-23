@@ -1,0 +1,21 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs'),os=require('node:os'),path=require('node:path');
+const {OutboxDiagnostics}=require('../bridge/outbox_diagnostics.cjs');
+const root=fs.mkdtempSync(path.join(os.tmpdir(),'wecom-diagnostic-'));
+fs.writeFileSync(path.join(root,'status.json'),JSON.stringify({outbox_error:'review_required'}));
+let now='2026-11-15T10:00:00Z';const d=new OutboxDiagnostics(root,()=>now);
+d.begin();d.context={job_id:'a',file:'a.json',phase:'send_or_read_existing_receipt'};
+d.issue('drain_exception',new TypeError('secret must never be logged'));
+let x=d.finish();assert.equal(x.outbox_error,'review_required');assert.equal(x.outbox_active_issues[0].job_id,'a');
+let lines=fs.readFileSync(path.join(root,'outbox-diagnostic-history.jsonl'),'utf8').trim().split('\n');assert.equal(lines.length,2);assert.equal(JSON.parse(lines[0]).occurred_at,null);assert(!lines.join().includes('secret'));
+d.begin();d.context={job_id:'a',file:'a.json',phase:'send_or_read_existing_receipt'};d.issue('drain_exception',new TypeError('other'));
+d.context={job_id:'b',file:'b.json',phase:'send_or_read_existing_receipt'};
+const receipt={state:'server_accepted',attempted_at:'2026-11-15T09:00:00Z',finished_at:'2026-11-15T09:00:01Z'};
+assert.equal(d.result({job_id:'b'},receipt).last_outbox_at,receipt.finished_at);
+assert.equal(d.finish().outbox_error,'review_required'); // Other job success cannot erase A.
+assert.equal(fs.readFileSync(path.join(root,'outbox-diagnostic-history.jsonl'),'utf8').trim().split('\n').length,2);
+now='2026-11-15T11:00:00Z';d.begin();const result=d.result({job_id:'b'},receipt);assert.equal(result.last_outbox_at,receipt.finished_at);assert.equal(result.last_outbox_observed_at,now);
+x=d.finish();assert.equal(x.outbox_error,null);assert(x.outbox_last_error);assert.equal(x.outbox_active_issues.length,0);
+lines=fs.readFileSync(path.join(root,'outbox-diagnostic-history.jsonl'),'utf8').trim().split('\n');assert.equal(JSON.parse(lines[2]).kind,'issues_cleared');
+d.begin();d.context={job_id:'bad',file:'bad.json',phase:'read_job'};d.issue('unreadable_job',new SyntaxError());assert.equal(d.finish().outbox_active_issues[0].kind,'unreadable_job');
+console.log('PASS legacy history preserved without invented time; per-job errors; full-sweep clearing; stable actual send timestamp; no exception message leakage; repeated diagnostics deduplicated. No send or ACK API used.');

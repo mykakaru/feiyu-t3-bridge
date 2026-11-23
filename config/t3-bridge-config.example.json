@@ -1,0 +1,37 @@
+{
+  "version": 2,
+  "enabled": true,
+  "engine": "t3",
+  "quota_relay_enabled": true,
+  "quota_relay_max_hops": 2,
+  "quota_relay_daily_cap": 24,
+  "quota_relay_recency_seconds": 1800,
+  "quota_relay_notify_owner": true,
+  "t3_project_id": "REPLACE_WITH_YOUR_T3_PROJECT_ID",
+  "t3_project_title": "FeiyuTasks",
+  "t3_home": "C:\\Users\\YOUR_USER\\.t3",
+  "t3_cli": "C:\\Users\\YOUR_USER\\.t3\\bin\\t3.cmd",
+  "tasks_root": "C:\\Users\\YOUR_USER\\Documents\\WecomTasks",
+  "t3_cutover_epoch": 0,
+  "entry_model": {
+    "provider": "antigravity",
+    "model": "gemini-4-hydrogen",
+    "effort": "high"
+  },
+  "escalation_model": {
+    "provider": "antigravity",
+    "model": "gemini-4-neon",
+    "effort": "xhigh"
+  },
+  "clarification_mode": "strict",
+  "regular_slots": 4,
+  "light_slots": 8,
+  "light_burst_slots": 8,
+  "queue_expiry_exempt": true,
+  "progress_report_interval_seconds": 1800,
+  "auto_archive_enabled": true,
+  "auto_archive_after_seconds": 600,
+  "archive_triage_on_escalate": true,
+  "t3_turn_timeout_seconds": 10800,
+  "t3_launch_timeout_seconds": 90
+}

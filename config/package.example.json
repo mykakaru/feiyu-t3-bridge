@@ -1,0 +1,8 @@
+{
+  "name": "feiyu-t3-bridge-runtime",
+  "private": true,
+  "description": "Node.js dependency manifest for WeCom AI Bot official WebSocket SDK",
+  "dependencies": {
+    "@wecom/aibot-node-sdk": "1.0.6"
+  }
+}
